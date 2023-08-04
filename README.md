@@ -1,6 +1,8 @@
 **Object-Gym Documentation**
 
+![gym_envs](https://github.com/robowork/object-gym/assets/136655541/c6e4c029-2174-420f-b3a6-9e734007b4d0)
 This repository contains the environment to train a policy to move large ungraspable objects by applying forces in a physics simulator. The simulation and training is massively parallelized, running end-to-end on the GPU. Unlike other Gym examples, the action space of this environment consists of applying forces at specific agent positions, and does not actuate the DOF. 
+
 
 Required: 
 
