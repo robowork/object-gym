@@ -1,10 +1,11 @@
-from env import BoxEnv
+# script for PPO, modified from existing repo minimal-isaac-gym
 
+from env import BoxEnv
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
 from torch.distributions import MultivariateNormal
+import matplotlib.pyplot as plt
 
 class Net(nn.Module):
     def __init__(self, num_obs=2, num_act=1):
@@ -30,7 +31,6 @@ class Net(nn.Module):
 
         # value for critic network
         # evaluates the value of being in a specific state
-
         self.to_value = nn.Sequential(
             nn.Linear(256, 256),
             nn.LeakyReLU(),
@@ -41,7 +41,7 @@ class Net(nn.Module):
     def pi(self, x):
         x = self.shared_net(x)
         self.gamma = 0.99 
-        mu = self.to_mean(x)
+        mu = self.to_mean(x)    
         return mu
     
     # passes a value through the critic network (state-value function)
@@ -67,7 +67,7 @@ class PPO:
         self.chunk_size = 32
         self.mini_chunk_size = self.rollout_size // self.chunk_size
         self.mini_batch_size = self.args.num_envs * self.mini_chunk_size
-        self.num_eval_freq = 100
+        self.num_eval_freq = 275
 
         self.data = []
         self.score = 0
@@ -225,7 +225,6 @@ class PPO:
             print('Steps: {:04d} | Reward {:.04f} | Action Var {:.04f}'
                   .format(self.run_step, self.score, self.action_var[0].item()))
             self.score = 0
-
 
         self.run_step += 1
 

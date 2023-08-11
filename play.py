@@ -1,10 +1,13 @@
-from env import BoxEnv
+# this code allows you to play the saved policy onto the Isaac Gym env
 
+from env import BoxEnv
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import argparse
 from torch.distributions import MultivariateNormal
+import matplotlib.pyplot as plt
+import sys
 
 parser = argparse.ArgumentParser()
 
@@ -107,11 +110,41 @@ def play_trained_policy(filename="trained_model.pth"):
         # sends action to env to simulate
         env.step(action)
 
-        # next_obs, reward, done = env.obs_buf.clone(), env.reward_buf.clone(), env.reset_buf.clone()
         env.reset()
 
-x = True
+    
+while True:
+    try: 
+        play_trained_policy("trained_model.pth")
+    except KeyboardInterrupt:
+        plot = input("Would you like to plot results? (y/n): ")
+        if plot == 'y': 
+            steps = list(range(len(env.distance_avg)))
 
-while x == True:
-    play_trained_policy("trained_model.pth")
+            episode = [steps[i:i+(env.max_episode_length-1)] for i in range(0, len(steps), env.max_episode_length - 1)]
+
+            distance_per_episode = [env.box_y_avg[i:i+(env.max_episode_length-1)] for i in range(0, len(steps), (env.max_episode_length - 1))]
+
+            force_per_episode = [env.force_avg[i:i+(env.max_episode_length-1)] for i in range(0, len(steps), (env.max_episode_length - 1))]
+
+            plt.figure(1)
+            plt.plot(distance_per_episode[0], force_per_episode[0])
+            plt.title("Distance v. Force")
+            plt.xlabel("Distance Traveled (m)")
+            plt.ylabel("Force Applied (N)")
+            plt.grid()
+            plt.show()
+
+            sys.exit()
+        else:
+            sys.exit()
+
+
+
+        
+
+
+
+
+
 
